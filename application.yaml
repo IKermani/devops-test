@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wp-pma
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+spec:
+  project: default
+  source:
+    chart: wp-pma
+    repoURL: https://ikermani.github.io/devops-test
+    targetRevision: 0.1.0
+    helm:
+      releaseName: wp-pma
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: test
+
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true

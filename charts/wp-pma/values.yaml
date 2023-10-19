@@ -1,0 +1,69 @@
+wordpress:
+  wordpressUsername: iman
+  wordpressPassword: "123698745+-*/"
+  wordpressEmail: iman@rk.co
+  wordpressFirstName: Iman
+  wordpressLastName: Kermani
+  wordpressScheme: https
+  customPostInitScripts:
+    wp-home-blog.sh: |
+        #!/bin/bash
+        chmod +w /bitnami/wordpress/wp-config.php
+        sed -i "s|define( 'WP_HOME', 'https://' \. \$_SERVER\['HTTP_HOST'\] \. '/' );|define( 'WP_HOME', 'https://' \. \$_SERVER\['HTTP_HOST'\] . '/wordpress' );|g" /bitnami/wordpress/wp-config.php
+        sed -i "s|define( 'WP_SITEURL', 'https://' \. \$_SERVER\['HTTP_HOST'\] \. '/' );|define( 'WP_SITEURL', 'https://' \. \$_SERVER\['HTTP_HOST'\] . '/wordpress' );|g" /bitnami/wordpress/wp-config.php
+        wp cli cache clear
+        chmod -w /bitnami/wordpress/wp-config.php
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    pathType: Prefix
+    ingressClassName: "nginx"
+    hostname: iman-kermani-nl-rg3.maxtld.dev
+    path: /wordpress(/|$)(.*)
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-production
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/configuration-snippet: |
+        rewrite ^([^.?]*[^/])$ $1/ redirect;
+    tls: true
+    extraPaths:
+    - backend:
+        service:
+          name: my-wordpress
+          port:
+            name: http
+      path: /wordpress/wp-*(/|$)(.*)
+      pathType: Prefix
+  persistence:
+    storageClass: "local-path"
+  mariadb:
+    auth:
+      rootPassword: "123698745+-*/"
+      password: "123698745+-*/"
+    primary:
+      persistence:
+        storageClass: "local-path"
+
+
+phpmyadmin:
+  extraEnvVars:
+  - name: PHPMYADMIN_ABSOLUTE_URI
+    value: "https://iman-kermani-nl-rg3.maxtld.dev/dbadmin/"
+  ingress:
+    enabled: true
+    hostname: iman-kermani-nl-rg3.maxtld.dev
+    pathType: Prefix
+    path: /dbadmin(/|$)(.*)
+    annotations:
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/configuration-snippet: |
+        rewrite ^([^.?]*[^/])$ $1/ redirect;
+    tls: true
+    existingSecretName: "iman-kermani-nl-rg3.maxtld.dev-tls"
+    ingressClassName: "nginx"
+  db:
+    host: "wp-pma-mariadb.test.svc"
+
