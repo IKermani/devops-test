@@ -13,6 +13,9 @@ wordpress:
         sed -i "s|define( 'WP_SITEURL', 'https://' \. \$_SERVER\['HTTP_HOST'\] \. '/' );|define( 'WP_SITEURL', 'https://' \. \$_SERVER\['HTTP_HOST'\] . '/wordpress' );|g" /bitnami/wordpress/wp-config.php
         wp cli cache clear
         chmod -w /bitnami/wordpress/wp-config.php
+  wordpressExtraConfigContent: |
+    $_SERVER['REQUEST_URI'] = str_replace("/wp-admin/", "/wordpress/wp-admin/",  $_SERVER['REQUEST_URI']);
+    $_SERVER['REQUEST_URI'] = str_replace("/wp-login.php", "/wordpress/wp-login.php", $_SERVER['REQUEST_URI']);
   service:
     type: ClusterIP
   ingress:
