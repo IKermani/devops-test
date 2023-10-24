@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    managed-by: argocd.argoproj.io
+  labels:
+    argocd.argoproj.io/secret-type: repository
+  name: argo-repo
+  namespace: argocd
+type: Opaque
+data:
+  name: ZGV2b3BzLXRlc3Q=
+  password: Z2hwX1QybXphUnpZUkEySnlxbFdtcThUSzV4OEZDZ25WNzJRUzYzUQ==
+  project: ZGVmYXVsdA==
+  type: aGVsbQ==
+  url: aHR0cHM6Ly9pa2VybWFuaS5naXRodWIuaW8vZGV2b3BzLXRlc3Q=
+  username: aWtlcm1hbmk=
+

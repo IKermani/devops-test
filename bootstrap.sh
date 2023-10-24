@@ -57,6 +57,7 @@ kubectl apply -f cluster-issuer.yaml
 
 # Create application resource for automatic CD.
 echo "Create application resource for automatic CD."
+kubectl apply -f argo-repo.yaml
 kubectl apply -f application.yaml
 
 # As argocd cli is not installed to wait for the application status to be synced we use sleep instead
